@@ -4,10 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Post;
-use Illuminate\Http\Request;
+use App\Http\Requests\Post as PostRequest;
+
 
 class PostController extends Controller
 {
+    protected $post;// creo una propiedad
+    public function __construct(Post $post)
+    {
+        $this->post=$post;//la asigno a la entidad
+    }
     /**
      * Display a listing of the resource.
      *
@@ -24,9 +30,10 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(PostRequest $request)
     {
-        $post=Post::create($request->all());
+        //uso la propiedad con la entidad
+        $post=$this->post->create($request->all());
         return response()->json($post,201);
 
     }
@@ -49,7 +56,7 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(PostRequest $request, Post $post)
     {
         //
     }
