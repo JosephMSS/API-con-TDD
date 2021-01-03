@@ -77,7 +77,7 @@ class PostControllerTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $post = factory(Post::class)->create();
-        
+
         $response = $this->json('PUT', "/api/post/$post->id", [
             'title' => 'New title',
 
@@ -89,12 +89,28 @@ class PostControllerTest extends TestCase
     }
     public function test_delete()
     {
-         $this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
         $post = factory(Post::class)->create();
-        
+
         $response = $this->json('DELETE', "/api/post/$post->id");
-        $response->assertSee(null)//verificamos que no estamos recibiendo contenido
-            ->assertStatus(204);//sin contenido
+        $response->assertSee(null) //verificamos que no estamos recibiendo contenido
+            ->assertStatus(204); //sin contenido
         $this->assertDatabaseMissing('posts', ['id' => $post->id]);
+    }
+    public function test_index()
+    {
+        $this->withoutExceptionHandling();
+
+        factory(Post::class, 5)->create();
+        $response = $this->json('GET', '/api/post');
+        /**
+         * Verificamos que la estructura de datos este correcta, ademas de verfificar que estraemos muchos datos 
+         *  esto por medio del simbolo * , y por ultimo verificamos el estatus de la operacion recibiendo un ok.         
+         * */
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => ['id', 'title', 'created_at', 'updated_at']
+            ]
+        ])->assertStatus(200);
     }
 }
