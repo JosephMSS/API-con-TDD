@@ -62,7 +62,7 @@ class PostControllerTest extends TestCase
          * Creamoy gardamos un nuevo post en la base de datos, ademas lo guardamos en una variable para verificar que existe 
          * los buscamos por medio del id en la ruta y por utlimo completamos el asessert comprobando que el titulo que guardamos pertenece al titulo que se creo
          */
-        $post=factory(Post::class)->create();
+        $post = factory(Post::class)->create();
         $response = $this->json('GET', "/api/post/$post->id");
         $response->assertJsonStructure(['id', 'title', 'created_at', 'updated_at'])
             ->assertJson(['title' => $post->title])
@@ -70,11 +70,21 @@ class PostControllerTest extends TestCase
     }
     public function test_404_show()
     {
-        /**
-         * Creamoy gardamos un nuevo post en la base de datos, ademas lo guardamos en una variable para verificar que existe 
-         * los buscamos por medio del id en la ruta y por utlimo completamos el asessert comprobando que el titulo que guardamos pertenece al titulo que se creo
-         */
         $response = $this->json('GET', '/api/post/1000');
         $response->assertStatus(404);
+    }
+    public function test_update()
+    {
+        $this->withoutExceptionHandling();
+        $post = factory(Post::class)->create();
+        
+        $response = $this->json('PUT', "/api/post/$post->id", [
+            'title' => 'New title',
+
+        ]);
+        $response->assertJsonStructure(['id', 'title', 'created_at', 'updated_at'])
+            ->assertJson(['title' => 'New title'])
+            ->assertStatus(200);
+        $this->assertDatabaseHas('posts', ['title' => 'New title']);
     }
 }
