@@ -14,4 +14,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('post','Api\PostController');
+Route::apiResource('post','Api\PostController')->middleware('auth:api');//autenticacion mediante token
